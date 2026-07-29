@@ -137,6 +137,19 @@
   .ask-h{font-weight:800;font-size:1rem;margin-bottom:.5rem;line-height:1.35;padding-right:2.5rem}
   .ask p{font-size:.85rem;color:var(--ink2);line-height:1.6}
 
+  /* ---- current-issue permalink ---- */
+  .issue-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.6rem;font-weight:900;letter-spacing:.11em;text-transform:uppercase;
+    padding:4px 10px;border-radius:99px;white-space:nowrap;text-decoration:none;
+    color:#8AA6FF;background:rgba(65,105,225,.1);border:1px solid rgba(65,105,225,.32);
+    transition:color .25s,border-color .25s,background .25s}
+  .issue-link:hover{color:var(--cyan);border-color:rgba(0,255,255,.45);background:rgba(0,255,255,.07)}
+  .issue-link .dot{width:6px;height:6px;border-radius:99px;background:var(--cyan);flex:0 0 auto;
+    animation:issuePulse 2.4s ease-in-out infinite}
+  @keyframes issuePulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .issue-url{font-size:.68rem;color:#6C6C75;font-weight:600}
+  .issue-url a{color:#8AA6FF;text-decoration:none;border-bottom:1px solid rgba(65,105,225,.35)}
+  .issue-url a:hover{color:var(--cyan);border-bottom-color:rgba(0,255,255,.5)}
+
   .chartbox{position:relative;width:100%;height:330px}
   @media(max-width:900px){
     .db-row{grid-template-columns:1fr;gap:.45rem}
@@ -157,6 +170,10 @@
   <div class="max-w-[1240px] mx-auto px-6 py-4 flex justify-between items-center gap-6 flex-wrap">
     <div class="text-xl font-black tracking-tight">KAPE<span style="color:var(--cyan)">.</span>COPILOT
       <span class="hidden sm:inline ml-3 text-[.62rem] font-800 tracking-[.14em] uppercase" style="color:var(--ink3)">Progress to Date</span>
+      <a class="issue-link ml-3" href="https://philliptagarda-bizdev.github.io/btc-progress-jul2026/" target="_blank" rel="noopener"
+         title="Open the live hosted edition of this report">
+        <span class="dot"></span>Current issue
+      </a>
     </div>
     <div class="flex gap-6 overflow-x-auto hide-sb">
       <a href="#s1" class="nav-link">The Number</a>
@@ -185,6 +202,9 @@
     </p>
     <p class="text-sm mt-6" style="color:var(--ink3)">
       Phillip Tagarda &middot; Presales Enablement Manager &middot; ExpressVPN &middot; CyberGhost &middot; Private Internet Access &middot; Holiday.com
+    </p>
+    <p class="issue-url mt-4">
+      Current issue &middot; <a href="https://philliptagarda-bizdev.github.io/btc-progress-jul2026/" target="_blank" rel="noopener" title="Open the live hosted edition of this report">view the live edition</a>
     </p>
   </div>
 </header>
@@ -679,6 +699,7 @@
       Every figure in this report carries a value, a basis, a confidence and an as-of date in the underlying reporting suite. <strong>Basis for this update:</strong> sales feed live pull Jul 28, 2026 (11,465 records, full history restored) reconciled to the February&ndash;June monthly review decks. <strong>Confidence:</strong> high on filed figures, med on modelled projections, <span class="tag">[NEEDS DATA]</span> on July ExpressVPN for Teams. Monthly cadence unless stated.<br><br>
       <strong>April comparison figures</strong> are the February 2026 baseline as quoted verbatim in <em>Project_Break_The_Ceiling_Full.html</em>. <strong>Conversion figures</strong> are filed-date; CyberGhost and PIA July are 100% pending confirmation and are labelled as such throughout. <strong>The May Co-Pilot cohort lift</strong> (+8.97pp) is a different instrument and scope and is under re-review, with the cohort readout due in the first week of August &mdash; it is reported here as med confidence, not as a booked result.<br><br>
       <strong>Top-of-funnel figures</strong> are Zendesk ticket-category counts &mdash; a third denominator, never a conversion base. On the sales-ticket denominator ExpressVPN reads 3,708 &rarr; 3,767 &rarr; 3,668, essentially flat, which is why that item is a watch item rather than a confirmed decline.<br><br>
+      <strong>Current issue.</strong> The live, canonical edition of this report is hosted at <a href="https://philliptagarda-bizdev.github.io/btc-progress-jul2026/" target="_blank" rel="noopener" style="color:#8AA6FF">philliptagarda-bizdev.github.io/btc-progress-jul2026</a>. A copied, emailed or printed version may be a superseded issue &mdash; the hosted edition is the one to quote. Issues are dated, never retro-corrected: a figure is only ever quoted as-of its own issue date.<br><br>
       Prepared by Phillip Tagarda, Presales Enablement Manager, Kape Technologies. Companion to the weekly presales report and the master reconciliation ledger.
     </div>
   </details>
