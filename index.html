@@ -1,0 +1,926 @@
+<!-- ============================================================================
+ PROJECT BREAK THE CEILING — C-LEVEL PROGRESS REPORT
+ Apr 4 -> Jul 29, 2026 (116 days) · Phillip Tagarda, Presales Enablement Manager
+ Palette: Obsidian (#050505) + Royal Blue (#4169E1) -> Cyan (#00FFFF)
+   — inherited from Project_Break_The_Ceiling_Full_Brief.html
+ Visualizations: semicircle gauge · CSS dumbbell slope rows · Chart.js waterfall
+   · CSS bullet bars · target-band trend line · CSS milestone rail
+ CONFIRMATION: NO SVG. NO Mermaid. NO browser storage APIs.
+============================================================================= -->
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Break the Ceiling — Progress to Date · Jul 29, 2026</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#050505; --panel:#0A0A0A; --panel2:#101013; --line:#18181B; --line2:#27272A;
+    --ink:#F8FAFC; --ink2:#D4D4D8; --ink3:#8A8A93;
+    --blue:#4169E1; --cyan:#00FFFF; --emerald:#10B981; --amber:#F59E0B; --red:#EF4444;
+  }
+  *{box-sizing:border-box}
+  body{font-family:'Urbanist',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:1.25rem}
+  .panel-2{background:var(--panel2);border:1px solid var(--line);border-radius:1rem}
+  .grad{background:linear-gradient(100deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .grad-warm{background:linear-gradient(100deg,#F59E0B,#FBBF24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hair{height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent)}
+
+  /* ---- reveal ---- */
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+  .rv.in{opacity:1;transform:none}
+
+  /* ---- nav ---- */
+  .nav-link{position:relative;padding-bottom:4px;color:var(--ink3);font-weight:700;font-size:.8rem;letter-spacing:.02em;white-space:nowrap;transition:color .25s}
+  .nav-link:hover{color:var(--cyan)}
+  .nav-link.active{color:var(--cyan)}
+  .nav-link.active::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan))}
+
+  /* ---- gauge ---- */
+  .gauge-wrap{position:relative;width:100%;max-width:460px;margin:0 auto}
+  .gauge-canvas{position:relative;height:250px}
+  .gauge-center{position:absolute;left:0;right:0;bottom:6px;text-align:center;pointer-events:none}
+
+  /* ---- KPI ---- */
+  .kpi{background:var(--panel2);border:1px solid var(--line);border-radius:1rem;padding:1.35rem 1.25rem;position:relative;overflow:hidden;transition:border-color .3s,transform .3s}
+  .kpi:hover{border-color:var(--line2);transform:translateY(-3px)}
+  .kpi::before{content:'';position:absolute;inset:0 0 auto 0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));opacity:.75}
+  .kpi.warm::before{background:linear-gradient(90deg,#F59E0B,#FBBF24)}
+  .kpi.good::before{background:linear-gradient(90deg,#10B981,#34D399)}
+  .kpi-n{font-size:2.15rem;font-weight:900;line-height:1;letter-spacing:-.02em}
+  .kpi-l{font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.11em;color:var(--ink3);margin-top:.55rem}
+  .kpi-s{font-size:.78rem;color:var(--ink2);margin-top:.4rem}
+
+  /* ---- dumbbell / slope rows ---- */
+  .db-row{display:grid;grid-template-columns:minmax(150px,1.15fr) minmax(180px,2.3fr) 90px;gap:1rem;align-items:center;padding:1rem 0;border-bottom:1px solid var(--line)}
+  .db-row:last-child{border-bottom:0}
+  .db-name{font-weight:700;font-size:.92rem;color:var(--ink)}
+  .db-sub{font-size:.68rem;color:var(--ink3);margin-top:2px}
+  .db-track{position:relative;height:34px}
+  .db-rail{position:absolute;top:15px;left:0;right:0;height:4px;background:var(--line);border-radius:99px}
+  .db-fill{position:absolute;top:15px;height:4px;border-radius:99px}
+  .db-dot{position:absolute;top:8px;width:18px;height:18px;border-radius:99px;margin-left:-9px;border:3px solid var(--bg);box-shadow:0 0 0 1px var(--line2)}
+  .db-dot.now{width:20px;height:20px;top:7px;margin-left:-10px;border-width:3px}
+  .db-tag{position:absolute;top:-4px;font-size:.7rem;font-weight:800;transform:translateX(-50%);white-space:nowrap}
+  .db-tag.below{top:auto;bottom:-6px;color:var(--ink3);font-weight:700}
+  .db-delta{text-align:right;font-weight:900;font-size:.95rem;white-space:nowrap}
+
+  /* ---- bullet bars ---- */
+  .blt{padding:.95rem 0;border-bottom:1px solid var(--line)}
+  .blt:last-child{border-bottom:0}
+  .blt-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.5rem;gap:.75rem}
+  .blt-name{font-weight:800;font-size:.95rem}
+  .blt-val{font-weight:900;font-size:1.05rem;white-space:nowrap}
+  .blt-track{position:relative;height:22px;background:var(--line);border-radius:6px;overflow:hidden}
+  .blt-band{position:absolute;top:0;bottom:0;background:rgba(16,185,129,.14)}
+  .blt-fill{position:absolute;top:5px;bottom:5px;left:0;border-radius:4px}
+  .blt-target{position:absolute;top:-3px;bottom:-3px;width:3px;background:var(--emerald);border-radius:2px}
+  .blt-foot{display:flex;justify-content:space-between;font-size:.7rem;color:var(--ink3);margin-top:.35rem}
+
+  /* ---- milestone rail ---- */
+  .rail{position:relative;padding-left:26px}
+  .rail::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--blue),var(--cyan),rgba(0,255,255,.15))}
+  .rail-item{position:relative;padding:.7rem 0 .7rem 0}
+  .rail-item::before{content:'';position:absolute;left:-24px;top:1.15rem;width:11px;height:11px;border-radius:99px;background:var(--cyan);box-shadow:0 0 0 4px rgba(0,255,255,.12)}
+  .rail-item.dim::before{background:var(--blue);box-shadow:0 0 0 4px rgba(65,105,225,.12)}
+  .rail-d{font-size:.66rem;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--cyan)}
+  .rail-item.dim .rail-d{color:var(--blue)}
+  .rail-t{font-weight:700;font-size:.95rem;margin-top:.15rem}
+  .rail-s{font-size:.8rem;color:var(--ink3);margin-top:.15rem;line-height:1.5}
+
+  /* ---- finding cards ---- */
+  .find{background:var(--panel2);border:1px solid var(--line);border-radius:1rem;padding:1.6rem;position:relative;overflow:hidden;height:100%}
+  .find::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+  .find.f-key::before{background:linear-gradient(180deg,var(--cyan),var(--blue))}
+  .find.f-watch::before{background:linear-gradient(180deg,#FBBF24,#F59E0B)}
+  .find.f-risk::before{background:linear-gradient(180deg,#F87171,#EF4444)}
+  .find-n{font-size:2.4rem;font-weight:900;line-height:1;color:var(--line2)}
+  .find-h{font-weight:800;font-size:1.08rem;margin:.5rem 0 .6rem;line-height:1.3}
+  .find p{font-size:.88rem;color:var(--ink2);line-height:1.65}
+
+  /* ---- chips / tags ---- */
+  .chip{display:inline-flex;align-items:center;gap:.35rem;font-size:.62rem;font-weight:900;letter-spacing:.09em;text-transform:uppercase;padding:4px 10px;border-radius:99px;white-space:nowrap}
+  .c-win{background:rgba(16,185,129,.13);color:#34D399;border:1px solid rgba(16,185,129,.38)}
+  .c-ship{background:rgba(65,105,225,.15);color:#8AA6FF;border:1px solid rgba(65,105,225,.4)}
+  .c-rev{background:rgba(245,158,11,.13);color:#FBBF24;border:1px solid rgba(245,158,11,.38)}
+  .c-open{background:rgba(138,138,147,.12);color:var(--ink2);border:1px solid rgba(138,138,147,.32)}
+  .tag{font-size:.66rem;color:#6C6C75;font-weight:600;letter-spacing:.01em}
+
+  /* ---- table ---- */
+  table{border-collapse:collapse;width:100%;text-align:left}
+  th{background:#101013;color:var(--ink3);font-weight:800;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:11px 14px;border-bottom:1px solid var(--line2)}
+  td{padding:13px 14px;border-bottom:1px solid var(--line);color:var(--ink2);font-size:.88rem;vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  tr:hover td{background:#0F0F12}
+  td.n,th.n{white-space:nowrap;text-align:right}
+
+  /* ---- fine print ---- */
+  details.fine{margin-top:1.5rem;border:1px solid var(--line);border-radius:.75rem;background:#08080A}
+  details.fine summary{cursor:pointer;padding:.8rem 1.1rem;font-size:.72rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);list-style:none;display:flex;align-items:center;gap:.5rem}
+  details.fine summary::-webkit-details-marker{display:none}
+  details.fine summary::before{content:'+';font-size:1rem;color:var(--cyan);font-weight:900}
+  details.fine[open] summary::before{content:'–'}
+  details.fine summary:hover{color:var(--ink2)}
+  details.fine .fine-body{padding:0 1.1rem 1.1rem;font-size:.79rem;color:#7C7C85;line-height:1.7}
+  details.fine .fine-body strong{color:var(--ink2)}
+
+  /* ---- ask cards ---- */
+  .ask{background:var(--panel2);border:1px solid var(--line);border-radius:1rem;padding:1.5rem;position:relative;transition:border-color .3s,transform .3s;height:100%}
+  .ask:hover{border-color:rgba(0,255,255,.35);transform:translateY(-3px)}
+  .ask-n{position:absolute;top:1.1rem;right:1.3rem;font-size:2.6rem;font-weight:900;color:#141418;line-height:1}
+  .ask-by{display:inline-block;font-size:.62rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);border:1px solid rgba(0,255,255,.3);background:rgba(0,255,255,.06);padding:3px 9px;border-radius:99px;margin-bottom:.7rem}
+  .ask-h{font-weight:800;font-size:1rem;margin-bottom:.5rem;line-height:1.35;padding-right:2.5rem}
+  .ask p{font-size:.85rem;color:var(--ink2);line-height:1.6}
+
+  .chartbox{position:relative;width:100%;height:330px}
+  @media(max-width:900px){
+    .db-row{grid-template-columns:1fr;gap:.45rem}
+    .db-delta{text-align:left}
+    .chartbox{height:290px}
+  }
+  ::-webkit-scrollbar{height:8px;width:8px}
+  ::-webkit-scrollbar-track{background:#0A0A0A}
+  ::-webkit-scrollbar-thumb{background:#27272A;border-radius:99px}
+  .hide-sb::-webkit-scrollbar{display:none}
+  .hide-sb{-ms-overflow-style:none;scrollbar-width:none}
+</style>
+</head>
+<body class="pb-28">
+
+<!-- ══════════════════ NAV ══════════════════ -->
+<nav class="sticky top-0 z-50 border-b" style="background:rgba(5,5,5,.88);backdrop-filter:blur(14px);border-color:var(--line)">
+  <div class="max-w-[1240px] mx-auto px-6 py-4 flex justify-between items-center gap-6 flex-wrap">
+    <div class="text-xl font-black tracking-tight">KAPE<span style="color:var(--cyan)">.</span>COPILOT
+      <span class="hidden sm:inline ml-3 text-[.62rem] font-800 tracking-[.14em] uppercase" style="color:var(--ink3)">Progress to Date</span>
+    </div>
+    <div class="flex gap-6 overflow-x-auto hide-sb">
+      <a href="#s1" class="nav-link">The Number</a>
+      <a href="#s2" class="nav-link">Then &rarr; Now</a>
+      <a href="#s3" class="nav-link">The Build</a>
+      <a href="#s4" class="nav-link">What Shipped</a>
+      <a href="#s5" class="nav-link">What Moved</a>
+      <a href="#s6" class="nav-link">The Ask</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<header class="max-w-[1240px] mx-auto px-6 pt-16 pb-10">
+  <div class="text-center max-w-4xl mx-auto rv">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[.62rem] font-black tracking-[.16em] uppercase mb-7"
+         style="background:rgba(65,105,225,.1);color:#8AA6FF;border:1px solid rgba(65,105,225,.32)">
+      <span style="width:6px;height:6px;border-radius:99px;background:var(--cyan);display:inline-block"></span>
+      Apr 4 &rarr; Jul 29, 2026 &middot; 116 Days
+    </div>
+    <h1 class="text-[2.9rem] md:text-[4.6rem] font-black leading-[1.02] tracking-[-.03em] mb-6">
+      Project <span class="grad">Break the Ceiling</span>
+    </h1>
+    <p class="text-lg md:text-xl leading-relaxed" style="color:var(--ink2)">
+      In April this was a diagnosis on paper. Today it is a running program &mdash; and here is what it has produced.
+    </p>
+    <p class="text-sm mt-6" style="color:var(--ink3)">
+      Phillip Tagarda &middot; Presales Enablement Manager &middot; ExpressVPN &middot; CyberGhost &middot; Private Internet Access &middot; Holiday.com
+    </p>
+  </div>
+</header>
+
+<main class="max-w-[1240px] mx-auto px-6 space-y-6">
+
+<!-- ══════════════════ 1 · THE NUMBER ══════════════════ -->
+<section id="s1" class="panel p-7 md:p-11 rv">
+  <div class="grid lg:grid-cols-[minmax(0,460px)_1fr] gap-10 lg:gap-14 items-center">
+
+    <div>
+      <div class="gauge-wrap">
+        <div class="gauge-canvas"><canvas id="gaugeChart"></canvas></div>
+        <div class="gauge-center">
+          <div class="text-[2.8rem] md:text-[3.3rem] font-black leading-none tracking-[-.03em] grad" id="heroDollar">$1.09M</div>
+          <div class="text-[.66rem] font-black tracking-[.14em] uppercase mt-2" style="color:var(--ink3)">In the bank &middot; 54.5% of $2M</div>
+        </div>
+      </div>
+      <div class="flex justify-center gap-5 mt-5 flex-wrap text-[.7rem] font-bold" style="color:var(--ink3)">
+        <span class="flex items-center gap-2"><span style="width:9px;height:9px;border-radius:2px;background:var(--cyan);display:inline-block"></span>Confirmed 54.5%</span>
+        <span class="flex items-center gap-2"><span style="width:9px;height:9px;border-radius:2px;background:var(--blue);display:inline-block"></span>Clearing +6.9%</span>
+        <span class="flex items-center gap-2"><span style="width:9px;height:9px;border-radius:2px;background:#1C1C21;display:inline-block"></span>To go 38.6%</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="text-[.66rem] font-black tracking-[.15em] uppercase mb-4" style="color:var(--cyan)">Where we stand</div>
+      <p class="text-xl md:text-[1.6rem] font-bold leading-[1.45] mb-6">
+        <span class="grad">$1,089,718 is banked and confirmed</span> &mdash; 54.5% of the $2M goal. Another
+        <span style="color:var(--cyan)">$139,184</span> is sold and clearing, which takes us to
+        <span style="color:var(--cyan)">61.4%</span> &mdash; ahead of the calendar.
+      </p>
+      <p class="text-base leading-relaxed mb-7" style="color:var(--ink2)">
+        From August we need about <strong style="color:var(--ink)">$182K a month</strong>. Our February&ndash;June average ran about
+        <strong style="color:var(--ink)">$202K</strong>. At that pace the goal is crossed around <strong style="color:var(--ink)">mid-November</strong>.
+      </p>
+
+      <div class="grid sm:grid-cols-3 gap-3">
+        <div class="panel-2 p-4">
+          <div class="text-[1.55rem] font-black leading-none" style="color:var(--cyan)">57.3%</div>
+          <div class="text-[.62rem] font-black tracking-[.1em] uppercase mt-2" style="color:var(--ink3)">Calendar elapsed</div>
+        </div>
+        <div class="panel-2 p-4">
+          <div class="text-[1.55rem] font-black leading-none" style="color:#34D399">+4.1<span class="text-base">pt</span></div>
+          <div class="text-[.62rem] font-black tracking-[.1em] uppercase mt-2" style="color:var(--ink3)">Ahead, incl. clearing</div>
+        </div>
+        <div class="panel-2 p-4">
+          <div class="text-[1.55rem] font-black leading-none">$910K</div>
+          <div class="text-[.62rem] font-black tracking-[.1em] uppercase mt-2" style="color:var(--ink3)">Left to close</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hair my-9"></div>
+
+  <!-- KPI STRIP -->
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="kpi good">
+      <div class="kpi-n" style="color:#34D399">1.91&times;</div>
+      <div class="kpi-l">Presales vs Support</div>
+      <div class="kpi-s">ExpressVPN 28.91% against support's 15.17%. Was 1.57&times; in April.</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-n grad">42.18%</div>
+      <div class="kpi-l">First Read Above 40%</div>
+      <div class="kpi-s">Private Internet Access, July. The target stopped being theoretical.</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-n grad">$17.7K</div>
+      <div class="kpi-l">Outbound, Built From $0</div>
+      <div class="kpi-s">40 deals in three months. The channel did not exist in Q1.</div>
+    </div>
+    <div class="kpi warm">
+      <div class="kpi-n grad-warm">12</div>
+      <div class="kpi-l">Programs Shipped</div>
+      <div class="kpi-s">In-house, zero added headcount, effectively zero added spend.</div>
+    </div>
+  </div>
+
+  <details class="fine">
+    <summary>The fine print on this number</summary>
+    <div class="fine-body">
+      <strong>Basis.</strong> $1,089,718 is the <em>confirmed</em> lane &mdash; rebuilt component by component from four named primary sources on Jul 28, not carried forward from a prior total. $1,228,902 is the same total on a <em>filed, including pending</em> basis. Calendar 57.3% = day 209 of 365. Required pace $182,056/month confirmed, $154,220/month filed. <span class="tag">[high confidence on filed figures &middot; as-of Jul 28, 2026 &middot; monthly cadence]</span><br><br>
+      <strong>The ~$202K/month pace</strong> is a February&ndash;June average on a filed basis with Teams inside <span class="tag">[med]</span>. July printed $147,238 across all channels on 28 days.<br><br>
+      <strong>Measure restated.</strong> The April document set the goal in Net New ARR. Progress here is tracked in booked presales revenue &mdash; plan bookings plus Teams closed-won plus outbound &mdash; which counts a multi-month plan once at face value. The two are not interchangeable; the restatement is deliberate and worth confirming.
+    </div>
+  </details>
+</section>
+
+<!-- ══════════════════ 2 · THEN → NOW ══════════════════ -->
+<section id="s2" class="panel p-7 md:p-11 rv">
+  <div class="flex items-end justify-between flex-wrap gap-4 mb-2">
+    <div>
+      <div class="text-[.66rem] font-black tracking-[.15em] uppercase mb-2" style="color:var(--cyan)">02 &middot; The scoreboard</div>
+      <h2 class="text-3xl md:text-4xl font-black tracking-[-.02em]">April promised. July delivered.</h2>
+    </div>
+    <div class="text-sm" style="color:var(--ink3)">Left dot = April 4 &middot; Right dot = July 29</div>
+  </div>
+  <p class="text-base leading-relaxed mb-8 max-w-3xl" style="color:var(--ink2)">
+    Six things the April document put a number on. Every one of them is now measured.
+  </p>
+
+  <div class="panel-2 p-5 md:p-7 mb-8">
+    <!-- ROW 1 -->
+    <div class="db-row">
+      <div><div class="db-name">Presales conversion</div><div class="db-sub">ExpressVPN &middot; scale 0&ndash;50%</div></div>
+      <div class="db-track">
+        <div class="db-rail"></div>
+        <div class="db-fill" style="left:57.8%;width:2.5%;background:#3A3A42"></div>
+        <div class="db-dot" style="left:60.3%;background:#3A3A42"></div>
+        <div class="db-dot now" style="left:57.8%;background:var(--cyan)"></div>
+        <div class="db-tag" style="left:57.8%;color:var(--cyan)">28.91%</div>
+        <div class="db-tag below" style="left:60.3%">30.16%</div>
+      </div>
+      <div class="db-delta" style="color:var(--ink2)">held</div>
+    </div>
+    <!-- ROW 2 -->
+    <div class="db-row">
+      <div><div class="db-name">Support conversion</div><div class="db-sub">Intent moved out &mdash; by design &middot; 0&ndash;50%</div></div>
+      <div class="db-track">
+        <div class="db-rail"></div>
+        <div class="db-fill" style="left:30.3%;width:8.2%;background:rgba(65,105,225,.45)"></div>
+        <div class="db-dot" style="left:38.5%;background:#3A3A42"></div>
+        <div class="db-dot now" style="left:30.3%;background:var(--blue)"></div>
+        <div class="db-tag" style="left:30.3%;color:#8AA6FF">15.17%</div>
+        <div class="db-tag below" style="left:38.5%">19.25%</div>
+      </div>
+      <div class="db-delta" style="color:#8AA6FF">&minus;4.1pt</div>
+    </div>
+    <!-- ROW 3 -->
+    <div class="db-row">
+      <div><div class="db-name">The multiple</div><div class="db-sub">Presales &divide; support &middot; scale 0&ndash;2.5&times;</div></div>
+      <div class="db-track">
+        <div class="db-rail"></div>
+        <div class="db-fill" style="left:62.8%;width:13.6%;background:linear-gradient(90deg,rgba(16,185,129,.35),var(--emerald))"></div>
+        <div class="db-dot" style="left:62.8%;background:#3A3A42"></div>
+        <div class="db-dot now" style="left:76.4%;background:var(--emerald)"></div>
+        <div class="db-tag" style="left:76.4%;color:#34D399">1.91&times;</div>
+        <div class="db-tag below" style="left:62.8%">1.57&times;</div>
+      </div>
+      <div class="db-delta" style="color:#34D399">+0.34&times;</div>
+    </div>
+    <!-- ROW 4 -->
+    <div class="db-row">
+      <div><div class="db-name">Best brand conversion</div><div class="db-sub">Any brand, any month &middot; 0&ndash;50%</div></div>
+      <div class="db-track">
+        <div class="db-rail"></div>
+        <div class="db-fill" style="left:60.3%;width:24.1%;background:linear-gradient(90deg,rgba(65,105,225,.4),var(--cyan))"></div>
+        <div class="db-dot" style="left:60.3%;background:#3A3A42"></div>
+        <div class="db-dot now" style="left:84.4%;background:var(--cyan)"></div>
+        <div class="db-tag" style="left:84.4%;color:var(--cyan)">42.18%</div>
+        <div class="db-tag below" style="left:60.3%">30.16%</div>
+      </div>
+      <div class="db-delta" style="color:var(--cyan)">+12.0pt</div>
+    </div>
+    <!-- ROW 5 -->
+    <div class="db-row">
+      <div><div class="db-name">Outbound, best month</div><div class="db-sub">Channel did not exist &middot; scale $0&ndash;$10K</div></div>
+      <div class="db-track">
+        <div class="db-rail"></div>
+        <div class="db-fill" style="left:0%;width:78.37%;background:linear-gradient(90deg,rgba(65,105,225,.35),var(--cyan))"></div>
+        <div class="db-dot" style="left:0.6%;background:#3A3A42"></div>
+        <div class="db-dot now" style="left:78.37%;background:var(--cyan)"></div>
+        <div class="db-tag" style="left:78.37%;color:var(--cyan)">$7,837</div>
+        <div class="db-tag below" style="left:2%">$0</div>
+      </div>
+      <div class="db-delta" style="color:var(--cyan)">new</div>
+    </div>
+    <!-- ROW 6 -->
+    <div class="db-row">
+      <div><div class="db-name">Progress to $2M</div><div class="db-sub">Confirmed money &middot; scale 0&ndash;100%</div></div>
+      <div class="db-track">
+        <div class="db-rail"></div>
+        <div class="db-fill" style="left:0%;width:54.5%;background:linear-gradient(90deg,var(--blue),var(--cyan))"></div>
+        <div class="db-dot" style="left:0.6%;background:#3A3A42"></div>
+        <div class="db-dot now" style="left:54.5%;background:var(--cyan)"></div>
+        <div class="db-tag" style="left:54.5%;color:var(--cyan)">54.5%</div>
+        <div class="db-tag below" style="left:2%">0%</div>
+      </div>
+      <div class="db-delta" style="color:var(--cyan)">$1.09M</div>
+    </div>
+  </div>
+
+  <!-- verdict grid -->
+  <div class="text-[.66rem] font-black tracking-[.13em] uppercase mb-4" style="color:var(--ink3)">Ten April claims, scored</div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+    <div class="panel-2 p-4"><span class="chip c-win">Proven</span><div class="text-sm font-bold mt-3 leading-snug">A dedicated lane beats general support</div><div class="text-xs mt-1.5" style="color:var(--ink3)">1.57&times; &rarr; 1.91&times;</div></div>
+    <div class="panel-2 p-4"><span class="chip c-rev">First read</span><div class="text-sm font-bold mt-3 leading-snug">40&ndash;50% floor is reachable</div><div class="text-xs mt-1.5" style="color:var(--ink3)">PIA 42.18%, pending confirmation</div></div>
+    <div class="panel-2 p-4"><span class="chip c-win">On track</span><div class="text-sm font-bold mt-3 leading-snug">$2M in the year</div><div class="text-xs mt-1.5" style="color:var(--ink3)">54.5% confirmed &middot; 61.4% filed</div></div>
+    <div class="panel-2 p-4"><span class="chip c-rev">Partly</span><div class="text-sm font-bold mt-3 leading-snug">An AI Co-Pilot lifts conversion</div><div class="text-xs mt-1.5" style="color:var(--ink3)">Cohort yes, floor not yet &mdash; &sect;5</div></div>
+    <div class="panel-2 p-4"><span class="chip c-win">Early</span><div class="text-sm font-bold mt-3 leading-snug">Outbound launch</div><div class="text-xs mt-1.5" style="color:var(--ink3)">Filed for Q3. Live in May.</div></div>
+    <div class="panel-2 p-4"><span class="chip c-ship">Closed</span><div class="text-sm font-bold mt-3 leading-snug">Kill the reporting lag</div><div class="text-xs mt-1.5" style="color:var(--ink3)">Full history restored Jul 28</div></div>
+    <div class="panel-2 p-4"><span class="chip c-ship">Shipped</span><div class="text-sm font-bold mt-3 leading-snug">Reform the QA scorecard</div><div class="text-xs mt-1.5" style="color:var(--ink3)">Simulator + sign-off form live</div></div>
+    <div class="panel-2 p-4"><span class="chip c-ship">Shipped</span><div class="text-sm font-bold mt-3 leading-snug">Interim tracking</div><div class="text-xs mt-1.5" style="color:var(--ink3)">Then upgraded to the real feed</div></div>
+    <div class="panel-2 p-4"><span class="chip c-rev">Reframed</span><div class="text-sm font-bold mt-3 leading-snug">Recover ~$1M of leakage</div><div class="text-xs mt-1.5" style="color:var(--ink3)">The pool relocated &mdash; &sect;5</div></div>
+    <div class="panel-2 p-4"><span class="chip c-open">In flight</span><div class="text-sm font-bold mt-3 leading-snug">Triage the red telemetry</div><div class="text-xs mt-1.5" style="color:var(--ink3)">PIA remediation + promo surge</div></div>
+  </div>
+
+  <details class="fine">
+    <summary>Why the multiple is 1.91&times; and not 2.14&times;</summary>
+    <div class="fine-body">
+      <strong>Because a comparison has to match on scope.</strong> April's 30.16% and 19.25% are both ExpressVPN, February, review-deck basis. So the July side uses ExpressVPN too: presales 952.8 &divide; 3,296 = 28.91%; support 44 &divide; 290 = 15.17%; 28.91 &divide; 15.17 = <strong>1.91&times;</strong>.<br><br>
+      Across all three brands the presales lane runs <strong>32.45%</strong> (1,665.8 &divide; 5,134), which gives 2.14&times;. That figure is real and is published in the weekly report &mdash; but it leans on CyberGhost and PIA, whose July sales are 100% pending confirmation, so it is quoted <em>alongside</em> the like-for-like number, never in place of it.<br><br>
+      <strong>Three April roadmap items are not scored above</strong> because they are still mid-flight: Co-Pilot integration across all three logos, short-term SPIFFs, and the Mac architecture fix. April's leakage model also rested partly on routing buyers onto the 24-month premium plan, not on the conversion gap alone.
+    </div>
+  </details>
+</section>
+
+<!-- ══════════════════ 3 · THE BUILD ══════════════════ -->
+<section id="s3" class="panel p-7 md:p-11 rv">
+  <div class="text-[.66rem] font-black tracking-[.15em] uppercase mb-2" style="color:var(--cyan)">03 &middot; The build</div>
+  <h2 class="text-3xl md:text-4xl font-black tracking-[-.02em] mb-3">Four sources. One number. Rebuildable on demand.</h2>
+  <p class="text-base leading-relaxed mb-9 max-w-3xl" style="color:var(--ink2)">
+    This is the part that matters most when the number gets challenged: it can be taken apart and put back together in front of you.
+  </p>
+
+  <div class="chartbox mb-3" style="height:360px"><canvas id="waterfallChart"></canvas></div>
+  <p class="text-center text-xs mb-10" style="color:var(--ink3)">Cumulative build to the confirmed total, then the pending balance that takes it to 61.4%</p>
+
+  <div class="grid lg:grid-cols-2 gap-9 items-start">
+    <div>
+      <div class="text-[.66rem] font-black tracking-[.13em] uppercase mb-4" style="color:var(--ink3)">July by brand &middot; against the 40% target</div>
+      <div class="panel-2 p-5">
+        <!-- PIA -->
+        <div class="blt">
+          <div class="blt-head"><div class="blt-name">Private Internet Access</div><div class="blt-val" style="color:var(--cyan)">42.18%</div></div>
+          <div class="blt-track">
+            <div class="blt-band" style="left:66.7%;right:16.7%"></div>
+            <div class="blt-fill" style="width:70.3%;background:linear-gradient(90deg,var(--blue),var(--cyan))"></div>
+            <div class="blt-target" style="left:66.7%"></div>
+          </div>
+          <div class="blt-foot"><span>402 of 953 tickets</span><span>above the 40% mark</span></div>
+        </div>
+        <!-- CG -->
+        <div class="blt">
+          <div class="blt-head"><div class="blt-name">CyberGhost</div><div class="blt-val">35.14%</div></div>
+          <div class="blt-track">
+            <div class="blt-band" style="left:66.7%;right:16.7%"></div>
+            <div class="blt-fill" style="width:58.57%;background:linear-gradient(90deg,rgba(65,105,225,.55),var(--blue))"></div>
+            <div class="blt-target" style="left:66.7%"></div>
+          </div>
+          <div class="blt-foot"><span>311 of 885 tickets</span><span>4.9 points to go</span></div>
+        </div>
+        <!-- XV -->
+        <div class="blt">
+          <div class="blt-head"><div class="blt-name">ExpressVPN presales</div><div class="blt-val">28.91%</div></div>
+          <div class="blt-track">
+            <div class="blt-band" style="left:66.7%;right:16.7%"></div>
+            <div class="blt-fill" style="width:48.2%;background:linear-gradient(90deg,rgba(65,105,225,.45),rgba(65,105,225,.9))"></div>
+            <div class="blt-target" style="left:66.7%"></div>
+          </div>
+          <div class="blt-foot"><span>952.8 of 3,296 tickets &middot; 64% of all presale volume</span><span>11.1 points to go</span></div>
+        </div>
+        <!-- BAU -->
+        <div class="blt">
+          <div class="blt-head"><div class="blt-name">General support</div><div class="blt-val" style="color:var(--ink3)">15.17%</div></div>
+          <div class="blt-track">
+            <div class="blt-band" style="left:66.7%;right:16.7%"></div>
+            <div class="blt-fill" style="width:25.3%;background:#2A2A31"></div>
+            <div class="blt-target" style="left:66.7%"></div>
+          </div>
+          <div class="blt-foot"><span>44 of 290 tickets &middot; the shield, not the engine</span><span>&mdash;</span></div>
+        </div>
+        <div class="text-[.68rem] mt-3 pt-3" style="color:#6C6C75;border-top:1px solid var(--line)">
+          Scale 0&ndash;60%. Green band = the 40&ndash;50% target floor; the green line marks 40%.
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="text-[.66rem] font-black tracking-[.13em] uppercase mb-4" style="color:var(--ink3)">The components</div>
+      <div class="panel-2 overflow-x-auto">
+        <table>
+          <thead><tr><th>Source</th><th class="n">Confirmed</th><th class="n">Incl. clearing</th></tr></thead>
+          <tbody>
+            <tr><td>Inbound &mdash; XV + CG + PIA<div class="tag mt-1">Sales feed, raw records</div></td><td class="n">$796,773</td><td class="n">$935,957</td></tr>
+            <tr><td>ExpressVPN for Teams<div class="tag mt-1">Closed-won, five review decks</div></td><td class="n">$282,200</td><td class="n">$282,200</td></tr>
+            <tr><td>Outbound<div class="tag mt-1">Tracker &mdash; ties to the cent</div></td><td class="n">$9,830</td><td class="n">$9,830</td></tr>
+            <tr><td>Holiday.com<div class="tag mt-1">Review deck, May + June</div></td><td class="n">$915</td><td class="n">$915</td></tr>
+            <tr style="background:rgba(0,255,255,.045)">
+              <td><strong style="color:var(--ink)">Total</strong><div class="tag mt-1">of the $2M goal</div></td>
+              <td class="n"><strong style="color:var(--cyan);font-size:1rem">$1,089,718</strong><div class="tag mt-1">54.5%</div></td>
+              <td class="n"><strong style="color:#8AA6FF;font-size:1rem">$1,228,902</strong><div class="tag mt-1">61.4%</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-sm leading-relaxed mt-5" style="color:var(--ink2)">
+        When the progress bar was challenged on July 28 we rebuilt it from components rather than defend it. That surfaced and removed a
+        <strong style="color:var(--ink)">$43,592</strong> overstatement in our own headline &mdash; and set an honest August pace.
+      </p>
+    </div>
+  </div>
+
+  <details class="fine">
+    <summary>What does not yet reproduce, and what is deliberately held out</summary>
+    <div class="fine-body">
+      <strong>Teams is the one component that does not tie.</strong> $292,888 on the feed against $282,200 summed from the review decks &mdash; a $10,688 difference open with BI. We publish the lower number until they explain it.<br><br>
+      <strong>July Teams is [NEEDS DATA]</strong> &mdash; no July review deck exists yet. The January&ndash;June range is $41,769&ndash;$55,264 (average $47,033); adding a typical month would lift the filed lane to roughly 63.5&ndash;64.2%.<br><br>
+      <strong>Outbound inside the $2M is $9,830</strong> &mdash; May and June only, both tied to the review deck to the cent. July's $7,837 is in neither lane yet, pending its monthly cross-check, so it is upside rather than progress already counted.<br><br>
+      <strong>CyberGhost and PIA July sales are 100% pending confirmation</strong> and are never counted as confirmed anywhere in this report. PIA's 42.18% also sits above its own 30&ndash;40% sanity band, and the review-deck basis reads 31.9% for the same month &mdash; which is why it is presented as a signal to verify, not a result to bank. <span class="tag">Month-end projection ~1,845 units, range 1,800&ndash;1,890 [modeled &middot; med]</span>
+    </div>
+  </details>
+</section>
+
+<!-- ══════════════════ 4 · WHAT SHIPPED ══════════════════ -->
+<section id="s4" class="panel p-7 md:p-11 rv">
+  <div class="text-[.66rem] font-black tracking-[.15em] uppercase mb-2" style="color:var(--cyan)">04 &middot; What shipped</div>
+  <h2 class="text-3xl md:text-4xl font-black tracking-[-.02em] mb-3">Twelve workstreams in 116 days.</h2>
+  <p class="text-base leading-relaxed mb-9 max-w-3xl" style="color:var(--ink2)">
+    Built in-house. Nothing waiting on budget. One caveat stated plainly: the Co-Pilot itself is still a pilot &mdash; six agents, full deployment targeted for Q4.
+  </p>
+
+  <div class="grid lg:grid-cols-[1.1fr_1fr] gap-10">
+    <div class="rail">
+      <div class="rail-item dim"><div class="rail-d">Apr 24</div><div class="rail-t">Inbound Co-Pilot &mdash; Cohort 1 live</div><div class="rail-s">Twenty days after start. Three ExpressVPN chat agents on the augmented flow.</div></div>
+      <div class="rail-item dim"><div class="rail-d">May 18</div><div class="rail-t">Outbound Co-Pilot pilot live</div><div class="rail-s">A channel that did not exist in Q1. Record close rate of 56% in the pilot window.</div></div>
+      <div class="rail-item dim"><div class="rail-d">May</div><div class="rail-t">Outbound formalised &middot; 15 agents trained</div><div class="rail-s">Earned its own slide in the monthly review. Tracker has tied it to the cent twice running.</div></div>
+      <div class="rail-item dim"><div class="rail-d">Jun 18</div><div class="rail-t">PIA presale chat remediation</div><div class="rail-s">Rollout plan and floor-facing deck delivered. PIA is the brand that went on to print 42.18%.</div></div>
+      <div class="rail-item dim"><div class="rail-d">Jun 23</div><div class="rail-t">World Cup promo reporting for the C-suite</div><div class="rail-s">Weekly consolidated read on the no-refund window, plus the support surge it created.</div></div>
+      <div class="rail-item dim"><div class="rail-d">Jun 25</div><div class="rail-t">Trainer enablement kit shipped</div><div class="rail-s">Trainer notes and talking points &mdash; the program now scales without me in the room.</div></div>
+      <div class="rail-item"><div class="rail-d">Jul 7</div><div class="rail-t">90-Day Diagnostic + Coaching Plan</div><div class="rail-s">Nine slides: the finding, the gated sprint, the money, three leadership challenges answered in advance, escalation thresholds locked.</div></div>
+      <div class="rail-item"><div class="rail-d">Jul 10&ndash;15</div><div class="rail-t">DISC rollout &mdash; a shared coaching language</div><div class="rail-s">Across a roster now at 45 agents on four brands. Coaching language, explicitly not a decision variable.</div></div>
+      <div class="rail-item"><div class="rail-d">Jul 10&ndash;20</div><div class="rail-t">Daily cross-brand reporting cadence</div><div class="rail-s">Leadership now sees yesterday's number today instead of next month's.</div></div>
+      <div class="rail-item"><div class="rail-d">Jul 21&ndash;28</div><div class="rail-t">Two self-serve tools + sign-off form</div><div class="rail-s">Incentive Calculator and Inbound Scorecard Simulator &mdash; agents can price a behaviour change before they make it.</div></div>
+      <div class="rail-item"><div class="rail-d">Jul 24&ndash;26</div><div class="rail-t">CTA Closing Play + three coaching plans</div><div class="rail-s">The closing motion documented and pushed to the floor; one plan on the full Aug&ndash;Oct cadence with an agent-facing copy.</div></div>
+      <div class="rail-item"><div class="rail-d">Jul 28&ndash;29</div><div class="rail-t">One reconciled number set</div><div class="rail-s">Five review decks mined to primary source. Every published rate now rebuilds from its own numerator and denominator. Data history restored end to end.</div></div>
+    </div>
+
+    <div class="space-y-5">
+      <div>
+        <div class="text-[.66rem] font-black tracking-[.13em] uppercase mb-3" style="color:var(--ink3)">Outbound &mdash; from nothing</div>
+        <div class="panel-2 p-5">
+          <div class="chartbox" style="height:250px"><canvas id="obChart"></canvas></div>
+          <p class="text-xs mt-3" style="color:var(--ink3)">
+            July is the best month yet at <strong style="color:var(--ink2)">$7,837</strong> from 12 deals, about $653 each &mdash; more than double June. Forty deals since launch.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-3">
+        <div class="panel-2 p-4"><div class="text-[1.4rem] font-black leading-none grad">$423</div><div class="text-[.6rem] font-black tracking-[.1em] uppercase mt-2" style="color:var(--ink3)">Monthly cohort spend</div><div class="text-xs mt-2" style="color:var(--ink2)">Returned about $5,100 &mdash; roughly 12&times;.</div></div>
+        <div class="panel-2 p-4"><div class="text-[1.4rem] font-black leading-none grad">Zero</div><div class="text-[.6rem] font-black tracking-[.1em] uppercase mt-2" style="color:var(--ink3)">Headcount added</div><div class="text-xs mt-2" style="color:var(--ink2)">Same people, same tickets, better routing.</div></div>
+        <div class="panel-2 p-4"><div class="text-[1.4rem] font-black leading-none grad">Human</div><div class="text-[.6rem] font-black tracking-[.1em] uppercase mt-2" style="color:var(--ink3)">In the loop, always</div><div class="text-xs mt-2" style="color:var(--ink2)">The AI drafts. It never sends.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <details class="fine">
+    <summary>What "shipped" means for each of the twelve</summary>
+    <div class="fine-body">
+      <strong>The Co-Pilot is still a pilot.</strong> Six agents. Cohort 1 went live Apr 24; the pilot expanded to a second group about a month later, and Cohort 2 (Paris, Arla, Estie) is queued. Full deployment is targeted for Q4 2026. Nothing here claims floor-wide deployment.<br><br>
+      <strong>Three of the twelve are reporting instruments, not floor programs</strong> &mdash; the World Cup C-suite read, the daily cross-brand cadence, and the reconciled number set. They changed what leadership can see, not what agents do.<br><br>
+      <strong>Coaching plans:</strong> three written. One is on the full Aug&ndash;Oct cadence with an agent-facing copy; the other two run on shorter windows. <strong>DISC</strong> is adopted as shared coaching language and explicitly not as a decision variable &mdash; triggers come off measured close-rate deltas.<br><br>
+      <strong>The 56% outbound close rate</strong> is the pilot-window record, not a sustained rate. <strong>The $423 / ~$5,100 / ~12&times; figures</strong> are June, one month, three agents <span class="tag">[med &middot; modeled from the cohort delta &middot; under re-review alongside the May lift, readout Aug W1]</span>.<br><br>
+      <strong>Roster</strong> stands at 45 agents across four brands as of Jul 12. Twelve Holiday.com agents backfill ExpressVPN and PIA and have no per-agent sales source <span class="tag">[NEEDS DATA]</span>.
+    </div>
+  </details>
+</section>
+
+<!-- ══════════════════ 5 · WHAT MOVED ══════════════════ -->
+<section id="s5" class="panel p-7 md:p-11 rv">
+  <div class="text-[.66rem] font-black tracking-[.15em] uppercase mb-2" style="color:var(--cyan)">05 &middot; What the data changed</div>
+  <h2 class="text-3xl md:text-4xl font-black tracking-[-.02em] mb-3">Four things April got wrong. Stated with the number.</h2>
+  <p class="text-base leading-relaxed mb-9 max-w-3xl" style="color:var(--ink2)">
+    A plan that never gets corrected by evidence was never really measuring anything.
+  </p>
+
+  <div class="grid md:grid-cols-2 gap-4 mb-10">
+    <div class="find f-key">
+      <div class="find-n">01</div>
+      <div class="find-h">The tool alone does not lift conversion. Coaching does.</div>
+      <p>The May pilot cohort was unambiguous: <strong style="color:var(--ink)">35.43% with the Co-Pilot against 26.46% without</strong>, a 9-point gap. But across the wider floor at 25% adoption, July reads <strong style="color:var(--ink)">19.6% with the tool against 20.8% without</strong>. Handle time still improves &mdash; 15.0 minutes against 17.8.</p>
+      <p class="mt-3"><strong style="color:#34D399">This is the most valuable finding of the four months.</strong> The lift lives in the coaching wrapped around the tool, not in the tool by itself. That is why the gated coaching sprint moved from a nice-to-have to the centre of the plan &mdash; and we found it in 90 days, inside the window where most organisations stall for six to twelve months without ever learning why.</p>
+    </div>
+
+    <div class="find f-key">
+      <div class="find-n">02</div>
+      <div class="find-h">The leakage pool relocated. It did not shrink.</div>
+      <p>April sized the prize at about $86K a month sitting in support tickets that should have converted. Measured honestly, that ticket pool barely moved: general support ran <strong style="color:var(--ink)">265 tickets in February</strong> &mdash; the actual April baseline &mdash; and <strong style="color:var(--ink)">290 in July</strong>. What changed is its conversion, 19.25% to 15.17%, as high-intent traffic moved into the presales lane exactly as designed.</p>
+      <p class="mt-3"><strong style="color:#34D399">Where the value sits now:</strong> the last 7.5 points between the presales lane's 32.45% and the 40% floor PIA has now printed &mdash; on a base of 5,134 tickets a month rather than 290. A far bigger prize, and a coaching problem with a candidate exemplar already inside the building.</p>
+    </div>
+
+    <div class="find f-risk">
+      <div class="find-n">03</div>
+      <div class="find-h">Traffic into the funnel is shrinking across all three brands at once.</div>
+      <p>Presale ticket-category volume, March to May: ExpressVPN <strong style="color:var(--ink)">4,210 &rarr; 3,987 &rarr; 3,757</strong> &middot; CyberGhost <strong style="color:var(--ink)">940 &rarr; 934 &rarr; 815</strong> &middot; PIA <strong style="color:var(--ink)">711 &rarr; 598 &rarr; 564</strong>. Three brands moving together points to one shared upstream cause, not three brand problems.</p>
+      <p class="mt-3">Candidates we can see: the April eSIM coupon wind-down, and the ExpressAI beta absorbing chats outside the deflection statistics. Chatbot deflection is steady at about 33%, so it is not that. <strong style="color:var(--ink)">These are clues, not a confirmed cause.</strong> A rising conversion rate on a falling base still ends in a smaller number &mdash; this is the one item here that could beat us on arithmetic alone, which is why it is in the Ask.</p>
+    </div>
+
+    <div class="find f-watch">
+      <div class="find-n">04</div>
+      <div class="find-h">Measurement discipline became a deliverable of its own.</div>
+      <p>April did not anticipate this. Over four months we found the same month reported at four different values depending on how far confirmation had run &mdash; not errors, but four points on one curve. So a standard now governs every published number: <strong style="color:var(--ink)">state the date basis, the confirmation state, the numerator and the denominator</strong>, and compare two figures only when all four match.</p>
+      <p class="mt-3"><strong style="color:#FBBF24">What it bought us:</strong> the $43,592 correction to our own headline, and every published conversion rate recomputing from its own numerator and denominator &mdash; 19 of 19 brand-months, 9 of 9 sales-and-ticket statements, 8 of 8 in-text rate triples, all tying, with three May figures deliberately held pending one ruling. When a C-level asks "why should I trust this number", there is a five-minute answer.</p>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-[1.15fr_1fr] gap-9 items-start">
+    <div>
+      <div class="text-[.66rem] font-black tracking-[.13em] uppercase mb-3" style="color:var(--ink3)">ExpressVPN presales conversion &middot; February to July</div>
+      <div class="panel-2 p-5">
+        <div class="chartbox"><canvas id="trendChart"></canvas></div>
+        <p class="text-xs mt-3" style="color:var(--ink3)">
+          <strong style="color:var(--ink2)">June set the record at 31.09%</strong> &mdash; 1,130.42 units from 3,636 tickets, the best month of the year on both. July covers days 1&ndash;28 and is still settling; because tickets usually catch up faster than sales, a filed rate typically normalises <em>down</em>. Treat 28.91% as a settling read, not a floor.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <div class="text-[.66rem] font-black tracking-[.13em] uppercase mb-3" style="color:var(--ink3)">Open, tagged, waiting on a decision</div>
+      <div class="panel-2 overflow-x-auto">
+        <table>
+          <thead><tr><th>Item</th><th class="n">Size</th><th class="n">By</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color:var(--ink)">Does Teams count inside the $2M?</strong><div class="tag mt-1">The largest unresolved number of the half</div></td><td class="n">54.5%<br>&harr; 40.3%</td><td class="n">Aug 1</td></tr>
+            <tr><td><strong style="color:var(--ink)">CyberGhost / PIA confirmation stall</strong><div class="tag mt-1">8.7% and 11% in June, 0% in July, against ExpressVPN's 76&ndash;80%. A process gap, not a lag.</div></td><td class="n">~$77K</td><td class="n">Aug 1</td></tr>
+            <tr><td><strong style="color:var(--ink)">Teams year-to-date, two figures</strong><div class="tag mt-1">We quote the conservative one until BI explains it</div></td><td class="n">$10,688</td><td class="n">Aug 1</td></tr>
+            <tr><td><strong style="color:var(--ink)">April / May basis ruling</strong><div class="tag mt-1">Fixing one month without the others leaves three consecutive months on three bases</div></td><td class="n">4 months<br>of charts</td><td class="n">Jul 30</td></tr>
+            <tr><td><strong style="color:var(--ink)">Top-of-funnel cause</strong><div class="tag mt-1">Needs Marketing and Product in one room</div></td><td class="n">up to<br>&minus;14% vol</td><td class="n">Aug 7</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs mt-4" style="color:var(--ink3)">None of these changes the headline: <strong style="color:var(--ink2)">$1,089,718 confirmed, $1,228,902 including what is clearing.</strong></p>
+    </div>
+  </div>
+
+  <details class="fine">
+    <summary>The basis behind each of the four findings</summary>
+    <div class="fine-body">
+      <strong>Finding 1 &mdash; two different instruments.</strong> The May cohort figures (35.43% vs 26.46%) come from the pilot conversion report; the July all-agent read (19.6% with vs 20.8% without, 25.0% adoption, handle time 15.0 vs 17.8 min) comes from the Co-Pilot dashboard on a new-customer scope, read Jul 27. They are bridged, never blended, and the May lift is under re-review with a cohort readout due in the first week of August <span class="tag">[med]</span>.<br><br>
+      <strong>Finding 2 &mdash; which April baseline.</strong> The April document's support baseline was February: 51 sales from 265 tickets = 19.25%. July is 44 from 290 = 15.17%. April's own month shows 397 support tickets, but that figure is unruled &mdash; a 231-ticket support-to-presales re-split is open, and the report's own basis puts April support at 166. We compare to February because that is what April actually quoted.<br><br>
+      <strong>Finding 3 &mdash; a third denominator.</strong> The 4,210 / 940 / 711 series are <em>Zendesk ticket-category</em> counts. They are not sales-opportunity tickets and must never be used as a conversion base. On the sales-ticket denominator ExpressVPN reads 3,708 &rarr; 3,767 &rarr; 3,668 &mdash; essentially flat. That is precisely why this is a watch item and not a declared decline.<br><br>
+      <strong>Finding 4 &mdash; what is still held.</strong> Three May figures sit deliberately on their old basis pending the Jul 30 ruling: CyberGhost May tickets and conversion, PIA May tickets and conversion, and ExpressVPN support May. Patching one without the others would leave three consecutive months on three different bases, which our own rule forbids. They are flagged in-report rather than quietly restated.
+    </div>
+  </details>
+</section>
+
+<!-- ══════════════════ 6 · THE ASK ══════════════════ -->
+<section id="s6" class="panel p-7 md:p-11 rv" style="border-color:rgba(65,105,225,.28)">
+  <div class="text-[.66rem] font-black tracking-[.15em] uppercase mb-2" style="color:var(--cyan)">06 &middot; The decision</div>
+  <div class="flex items-end justify-between flex-wrap gap-4 mb-3">
+    <h2 class="text-3xl md:text-4xl font-black tracking-[-.02em]">Four decisions. All dated.</h2>
+    <div class="text-[.66rem] font-black tracking-[.14em] uppercase" style="color:var(--ink3)">Target: Yossi Tal</div>
+  </div>
+  <p class="text-base leading-relaxed mb-9 max-w-3xl" style="color:var(--ink2)">
+    The proof phase is finished. What remains is scale &mdash; taking the presales lane from today's level to the 40% one brand has already printed, on a base we are actively defending.
+  </p>
+
+  <div class="grid md:grid-cols-2 gap-4 mb-10">
+    <div class="ask">
+      <div class="ask-n">1</div>
+      <div class="ask-by">By Aug 1</div>
+      <div class="ask-h">Approve the gated coaching sprint</div>
+      <p>About <strong style="color:var(--ink)">$423 a month</strong> at today's cohort size &mdash; roughly $1.3K a quarter &mdash; built in-house, zero added headcount. Four months, gated every 30 days. If the gates do not move, the coaching record itself becomes clean documented due process. Every outcome is a win.</p>
+    </div>
+    <div class="ask">
+      <div class="ask-n">2</div>
+      <div class="ask-by">By Aug 1</div>
+      <div class="ask-h">Settle the Teams scope question</div>
+      <p>Does ExpressVPN for Teams count inside the $2M? In, we are at <strong style="color:var(--ink)">54.5%</strong>. Out, <strong style="color:var(--ink)">40.3%</strong>. Cost of deciding: nothing. Cost of not deciding: every forecast this half carries a 14-point error bar.</p>
+    </div>
+    <div class="ask">
+      <div class="ask-n">3</div>
+      <div class="ask-by">By Aug 1</div>
+      <div class="ask-h">BI commitment in writing</div>
+      <p>Three things: explain the <strong style="color:var(--ink)">$10,688</strong> Teams difference, unstall CyberGhost and PIA confirmation (about <strong style="color:var(--ink)">$77K</strong>), and restore payout-tracker accuracy for 45 agents. This is the only part of the $2M that cannot yet be rebuilt from a primary source.</p>
+    </div>
+    <div class="ask">
+      <div class="ask-n">4</div>
+      <div class="ask-by">By Aug 7</div>
+      <div class="ask-h">One room on top-of-funnel</div>
+      <p>Marketing, Product and Presales. Sixty minutes. One question: why are chats down across all three brands at once? <strong style="color:var(--ink)">I can keep raising conversion. I cannot manufacture traffic.</strong></p>
+    </div>
+  </div>
+
+  <div class="p-8 md:p-11 rounded-2xl relative overflow-hidden"
+       style="background:linear-gradient(135deg,#0A0A0F,#101018);border:1px solid rgba(0,255,255,.2)">
+    <div style="position:absolute;top:-90px;right:-60px;width:280px;height:280px;border-radius:99px;background:var(--blue);opacity:.16;filter:blur(90px)"></div>
+    <p class="text-lg md:text-2xl font-bold leading-[1.55] text-center relative max-w-4xl mx-auto">
+      &ldquo;April asked you to believe a diagnosis. July hands you the receipts &mdash;
+      <span class="grad">$1.09M confirmed</span>, a lane converting <span class="grad">1.91&times;</span> its baseline,
+      a first read above <span class="grad">40%</span>, and an outbound channel built from nothing.
+      The remaining gap is coaching, and we know exactly where it is. Arm the sprint and the year closes itself.&rdquo;
+    </p>
+  </div>
+
+  <details class="fine">
+    <summary>Basis, confidence and as-of for everything above</summary>
+    <div class="fine-body">
+      Every figure in this report carries a value, a basis, a confidence and an as-of date in the underlying reporting suite. <strong>Basis for this update:</strong> sales feed live pull Jul 28, 2026 (11,465 records, full history restored) reconciled to the February&ndash;June monthly review decks. <strong>Confidence:</strong> high on filed figures, med on modelled projections, <span class="tag">[NEEDS DATA]</span> on July ExpressVPN for Teams. Monthly cadence unless stated.<br><br>
+      <strong>April comparison figures</strong> are the February 2026 baseline as quoted verbatim in <em>Project_Break_The_Ceiling_Full.html</em>. <strong>Conversion figures</strong> are filed-date; CyberGhost and PIA July are 100% pending confirmation and are labelled as such throughout. <strong>The May Co-Pilot cohort lift</strong> (+8.97pp) is a different instrument and scope and is under re-review, with the cohort readout due in the first week of August &mdash; it is reported here as med confidence, not as a booked result.<br><br>
+      <strong>Top-of-funnel figures</strong> are Zendesk ticket-category counts &mdash; a third denominator, never a conversion base. On the sales-ticket denominator ExpressVPN reads 3,708 &rarr; 3,767 &rarr; 3,668, essentially flat, which is why that item is a watch item rather than a confirmed decline.<br><br>
+      Prepared by Phillip Tagarda, Presales Enablement Manager, Kape Technologies. Companion to the weekly presales report and the master reconciliation ledger.
+    </div>
+  </details>
+</section>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ═══ shared Chart.js setup ═══ */
+  var INK='#8A8A93', LINE='#18181B', BLUE='#4169E1', CYAN='#00FFFF',
+      EMERALD='#10B981', AMBER='#F59E0B', PANEL='#101013';
+
+  Chart.defaults.color = INK;
+  Chart.defaults.font.family = "'Urbanist', sans-serif";
+  Chart.defaults.font.weight = '600';
+  Chart.defaults.scale.grid.color = LINE;
+  Chart.defaults.scale.grid.drawTicks = false;
+  Chart.defaults.scale.border = { display:false };
+
+  var TT = {
+    backgroundColor:'#141418', titleColor:'#F8FAFC', bodyColor:'#D4D4D8',
+    borderColor:'#2A2A31', borderWidth:1, padding:12, cornerRadius:8,
+    displayColors:false, titleFont:{size:13,weight:'800'}, bodyFont:{size:13,weight:'600'}
+  };
+
+  function safeChart(id, cfg){
+    var el = document.getElementById(id);
+    if(!el) return null;
+    var prev = Chart.getChart ? Chart.getChart(el) : null;
+    if(prev) prev.destroy();
+    return new Chart(el.getContext('2d'), cfg);
+  }
+  function money(n){ return '$' + Math.round(n).toLocaleString('en-US'); }
+
+  /* ═══ 1 · SEMICIRCLE GAUGE ═══ */
+  safeChart('gaugeChart', {
+    type:'doughnut',
+    data:{
+      labels:['Confirmed','Sold and clearing','Still to close'],
+      datasets:[{
+        data:[54.5, 6.9, 38.6],
+        backgroundColor:[CYAN, BLUE, '#1C1C21'],
+        borderColor:'#050505', borderWidth:3, hoverOffset:6
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      rotation:-90, circumference:180, cutout:'74%',
+      layout:{padding:{top:8}},
+      plugins:{
+        legend:{display:false},
+        tooltip:Object.assign({}, TT, {
+          callbacks:{
+            label:function(c){
+              var d=['$1,089,718','$139,184','$910,282'];
+              return c.label + ': ' + c.parsed.toFixed(1) + '%  ·  ' + d[c.dataIndex];
+            }
+          }
+        })
+      }
+    }
+  });
+
+  /* ═══ 2 · WATERFALL ═══ */
+  safeChart('waterfallChart', {
+    type:'bar',
+    data:{
+      labels:[
+        ['Inbound','XV + CG + PIA'],
+        ['ExpressVPN','for Teams'],
+        ['Outbound'],
+        ['Holiday.com'],
+        ['CONFIRMED','54.5%'],
+        ['Sold and','clearing'],
+        ['INCL. CLEARING','61.4%']
+      ],
+      datasets:[{
+        data:[
+          [0, 796773],
+          [796773, 1078973],
+          [1078973, 1088803],
+          [1088803, 1089718],
+          [0, 1089718],
+          [1089718, 1228902],
+          [0, 1228902]
+        ],
+        backgroundColor:[
+          'rgba(65,105,225,.85)',
+          'rgba(65,105,225,.62)',
+          'rgba(65,105,225,.45)',
+          'rgba(65,105,225,.32)',
+          CYAN,
+          AMBER,
+          'rgba(0,255,255,.42)'
+        ],
+        borderRadius:5, borderSkipped:false, barPercentage:.72, categoryPercentage:.86
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:Object.assign({}, TT, {
+          callbacks:{
+            title:function(items){
+              var l=items[0].chart.data.labels[items[0].dataIndex];
+              return Array.isArray(l) ? l.join(' · ') : l;
+            },
+            label:function(c){
+              var v=c.raw, add=v[1]-v[0];
+              var note=[
+                'reproduces to the dollar',
+                '$10,688 feed difference open with BI',
+                'May + Jun · ties the review deck to the cent',
+                'May + Jun',
+                'four named primary sources',
+                'XV ~$62K timing · CG/PIA ~$77K stalled',
+                'filed, including pending'
+              ][c.dataIndex];
+              var lead = (c.dataIndex===4 || c.dataIndex===6)
+                ? 'Total ' + money(v[1])
+                : '+ ' + money(add) + '  →  ' + money(v[1]);
+              return lead + '  ·  ' + note;
+            }
+          }
+        })
+      },
+      scales:{
+        x:{ grid:{display:false}, ticks:{font:{size:10,weight:'800'}, maxRotation:0, autoSkip:false} },
+        y:{ beginAtZero:true, max:1400000, grid:{color:LINE},
+            ticks:{callback:function(v){ return v===0 ? '0' : '$' + (v/1000000).toFixed(1) + 'M'; }, font:{size:11}} }
+      }
+    }
+  });
+
+  /* ═══ 3 · OUTBOUND ═══ */
+  safeChart('obChart', {
+    type:'bar',
+    data:{
+      labels:['Apr','May','Jun','Jul'],
+      datasets:[{
+        data:[0, 6222.88, 3606.70, 7837],
+        backgroundColor:['#1C1C21','rgba(65,105,225,.75)','rgba(65,105,225,.55)',CYAN],
+        borderRadius:5, borderSkipped:false, barPercentage:.6
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:Object.assign({}, TT, {
+          callbacks:{
+            label:function(c){
+              var deals=[0,19,9,12];
+              var note=['','inside the $2M','inside the $2M','not in the $2M yet — upside'];
+              if(c.dataIndex===0) return 'Channel did not exist';
+              return money(c.parsed.y) + '  ·  ' + deals[c.dataIndex] + ' deals  ·  ' + note[c.dataIndex];
+            }
+          }
+        })
+      },
+      scales:{
+        x:{grid:{display:false}, ticks:{font:{size:11,weight:'800'}}},
+        y:{beginAtZero:true, grid:{color:LINE},
+           ticks:{callback:function(v){ return '$' + (v/1000).toFixed(0) + 'k'; }, font:{size:11}}}
+      }
+    }
+  });
+
+  /* ═══ 4 · TREND with target band ═══ */
+  safeChart('trendChart', {
+    type:'line',
+    data:{
+      labels:['Feb','Mar','Apr','May','Jun','Jul MTD'],
+      datasets:[
+        { label:'Target ceiling 50%', data:[50,50,50,50,50,50],
+          borderColor:'rgba(16,185,129,.28)', borderWidth:1, borderDash:[3,4],
+          pointRadius:0, fill:'+1', backgroundColor:'rgba(16,185,129,.07)', tension:0, order:3 },
+        { label:'Target floor 40%', data:[40,40,40,40,40,40],
+          borderColor:'rgba(16,185,129,.6)', borderWidth:2, borderDash:[6,5],
+          pointRadius:0, fill:false, tension:0, order:2 },
+        { label:'ExpressVPN presales conversion', data:[30.16,28.25,29.31,28.03,31.09,28.91],
+          borderColor:CYAN, borderWidth:3, tension:.35, fill:true,
+          backgroundColor:'rgba(0,255,255,.08)',
+          pointBackgroundColor:'#050505', pointBorderColor:CYAN, pointBorderWidth:2.5,
+          pointRadius:5, pointHoverRadius:8, order:1 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{labels:{boxWidth:10, boxHeight:10, font:{size:11,weight:'700'}, filter:function(i){ return i.text.indexOf('ceiling')===-1; }}},
+        tooltip:Object.assign({}, TT, {
+          filter:function(i){ return i.datasetIndex===2; },
+          callbacks:{
+            label:function(c){
+              var n=['955','1,048','1,104','1,028','1,130.42','952.8'];
+              var d=['3,166','3,708','3,767','3,668','3,636','3,296'];
+              var extra=['','deck prints 28.25%','','','record month','days 1–28, still settling'];
+              var s = c.parsed.y.toFixed(2) + '%  ·  ' + n[c.dataIndex] + ' of ' + d[c.dataIndex];
+              return extra[c.dataIndex] ? s + '  ·  ' + extra[c.dataIndex] : s;
+            }
+          }
+        })
+      },
+      scales:{
+        x:{grid:{display:false}, ticks:{font:{size:11,weight:'800'}}},
+        y:{min:20, max:52, grid:{color:LINE},
+           ticks:{stepSize:10, callback:function(v){ return v + '%'; }, font:{size:11}}}
+      }
+    }
+  });
+
+  /* ═══ scroll reveal ═══ */
+  var rvs = document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window){
+    var ro = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target); } });
+    }, {rootMargin:'0px 0px -8% 0px', threshold:.06});
+    rvs.forEach(function(el){ ro.observe(el); });
+  } else {
+    rvs.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* ═══ nav highlight ═══ */
+  var links = document.querySelectorAll('.nav-link');
+  if('IntersectionObserver' in window){
+    var no = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(l){
+            l.classList.toggle('active', l.getAttribute('href').slice(1) === e.target.id);
+          });
+        }
+      });
+    }, {rootMargin:'-22% 0px -72% 0px', threshold:0});
+    document.querySelectorAll('main section').forEach(function(s){ no.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
